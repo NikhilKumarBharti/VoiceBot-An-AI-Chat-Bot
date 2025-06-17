@@ -1,1 +1,1 @@
-web: gunicorn app:voice_bot.app
+web: gunicorn app:app
