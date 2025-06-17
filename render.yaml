@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: voice-bot
+    env: python
+    region: oregon
+    buildCommand: |
+      apt-get update
+      apt-get install -y espeak espeak-data libespeak1 libespeak-dev ffmpeg
+      pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9.16
