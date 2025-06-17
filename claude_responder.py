@@ -102,8 +102,8 @@ class ClaudeResponder:
         headers = {
             'Authorization': f'Bearer {self.api_key}',
             'Content-Type': 'application/json',
-            'HTTP-Referer': 'https://github.com/your-repo',  # Optional: Replace with your app URL
-            'X-Title': 'AI Voice Bot'  # Optional: Replace with your app name
+            'HTTP-Referer': 'https://github.com/your-repo',
+            'X-Title': 'AI Voice Bot'
         }
         
         payload = {

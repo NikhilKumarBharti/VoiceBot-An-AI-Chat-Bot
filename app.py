@@ -52,7 +52,7 @@ class VoiceBotApp:
                 if not user_message:
                     return jsonify({'error': 'No message provided'}), 400
                 
-                # Generate Claude-style response
+                # Generate AI-style response
                 response = self.claude_responder.generate_response(user_message)
                 
                 # Save conversation

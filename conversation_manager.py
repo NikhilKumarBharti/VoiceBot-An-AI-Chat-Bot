@@ -18,7 +18,7 @@ class ConversationManager:
     def __init__(self, history_file: str = 'conversation_history.json'):
         self.history_file = history_file
         self.conversation_history = self._load_history()
-        self.max_history_length = 100  # Keep last 100 exchanges
+        self.max_history_length = 100  # Keeping last 100 exchanges
         
     def _load_history(self) -> List[Dict]:
         """Load conversation history from file"""
