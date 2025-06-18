@@ -3,7 +3,13 @@ services:
     name: voice-bot
     env: python
     region: oregon
-    prebuildCommand: apt-get update && apt-get install -y espeak espeak-data libespeak1 libespeak-dev ffmpeg
+    prebuildCommand: |
+      apt-get update && \
+      apt-get install -y \
+        espeak espeak-data libespeak1 libespeak-dev \
+        ffmpeg \
+        portaudio19-dev
+    buildCommand: pip install -r requirements.txt
     startCommand: gunicorn app:app
     envVars:
       - key: PYTHON_VERSION
