@@ -14,6 +14,8 @@ import speech_recognition as sr
 import pyttsx3
 import threading
 from pydub import AudioSegment
+import subprocess
+import platform
 
 logger = logging.getLogger(__name__)
 
@@ -25,11 +27,42 @@ class VoiceHandler:
         self.tts_engine = self._initialize_tts()
         self.microphone = sr.Microphone() if self._check_microphone_available() else None
         
-    def _initialize_tts(self) -> pyttsx3.Engine:
-        """Initialize text-to-speech engine"""
+    def _initialize_tts(self) -> Optional[pyttsx3.Engine]:
+        """Initialize text-to-speech engine with fallbacks"""
+        
+        # Try different TTS drivers in order of preference
+        drivers_to_try = []
+        
+        if platform.system() == 'Linux':
+            drivers_to_try = ['espeak', 'espeak-ng', 'festival']
+        elif platform.system() == 'Darwin':  # macOS
+            drivers_to_try = ['nsss']
+        elif platform.system() == 'Windows':
+            drivers_to_try = ['sapi5']
+        
+        # First try without specifying driver (default)
         try:
             engine = pyttsx3.init()
-            
+            return self._configure_engine(engine)
+        except Exception as e:
+            logger.warning(f"Failed to initialize default TTS engine: {str(e)}")
+        
+        # Try specific drivers
+        for driver in drivers_to_try:
+            try:
+                logger.info(f"Trying TTS driver: {driver}")
+                engine = pyttsx3.init(driverName=driver)
+                return self._configure_engine(engine)
+            except Exception as e:
+                logger.warning(f"Failed to initialize TTS with {driver}: {str(e)}")
+                continue
+        
+        logger.error("All TTS drivers failed, TTS will not be available")
+        return None
+    
+    def _configure_engine(self, engine) -> pyttsx3.Engine:
+        """Configure TTS engine settings"""
+        try:
             # Configure voice settings
             voices = engine.getProperty('voices')
             if voices:
@@ -47,10 +80,9 @@ class VoiceHandler:
             engine.setProperty('volume', 0.8)  # Volume level (0.0 to 1.0)
             
             return engine
-            
         except Exception as e:
-            logger.error(f"Failed to initialize TTS engine: {str(e)}")
-            return None
+            logger.warning(f"Failed to configure TTS engine: {str(e)}")
+            return engine
     
     def _check_microphone_available(self) -> bool:
         """Check if microphone is available"""
@@ -107,8 +139,8 @@ class VoiceHandler:
     def text_to_speech(self, text: str) -> Optional[str]:
         """Convert text to speech and return base64 encoded audio"""
         if not self.tts_engine:
-            logger.error("TTS engine not available")
-            return None
+            logger.warning("TTS engine not available, trying command line fallback")
+            return self._fallback_tts(text)
             
         try:
             # Create temporary file for audio output
@@ -118,6 +150,12 @@ class VoiceHandler:
             # Generate speech
             self.tts_engine.save_to_file(text, temp_path)
             self.tts_engine.runAndWait()
+            
+            # Check if file was created and has content
+            if not os.path.exists(temp_path) or os.path.getsize(temp_path) == 0:
+                logger.warning("TTS engine didn't produce audio file, trying fallback")
+                os.unlink(temp_path) if os.path.exists(temp_path) else None
+                return self._fallback_tts(text)
             
             # Read the audio file and encode to base64
             with open(temp_path, 'rb') as audio_file:
@@ -131,7 +169,39 @@ class VoiceHandler:
             
         except Exception as e:
             logger.error(f"Text to speech error: {str(e)}")
-            return None
+            return self._fallback_tts(text)
+    
+    def _fallback_tts(self, text: str) -> Optional[str]:
+        """Fallback TTS using command line espeak"""
+        try:
+            with tempfile.NamedTemporaryFile(delete=False, suffix='.wav') as temp_file:
+                temp_path = temp_file.name
+            
+            # Try espeak command line
+            cmd = ['espeak', '-w', temp_path, '-s', '180', text]
+            result = subprocess.run(cmd, capture_output=True, text=True, timeout=30)
+            
+            if result.returncode == 0 and os.path.exists(temp_path) and os.path.getsize(temp_path) > 0:
+                with open(temp_path, 'rb') as audio_file:
+                    audio_data = audio_file.read()
+                    audio_base64 = base64.b64encode(audio_data).decode('utf-8')
+                
+                os.unlink(temp_path)
+                logger.info("Used espeak command line fallback successfully")
+                return audio_base64
+            else:
+                logger.error(f"Espeak command failed: {result.stderr}")
+                
+        except subprocess.TimeoutExpired:
+            logger.error("Espeak command timed out")
+        except Exception as e:
+            logger.error(f"Fallback TTS error: {str(e)}")
+        
+        finally:
+            if os.path.exists(temp_path):
+                os.unlink(temp_path)
+        
+        return None
     
     def listen_from_microphone(self, timeout: int = 5) -> Optional[str]:
         """Listen for speech from microphone (for future use)"""
@@ -178,6 +248,15 @@ class VoiceHandler:
             try:
                 test_audio = self.text_to_speech("Testing audio capabilities")
                 results['tts_test'] = test_audio is not None
+            except Exception as e:
+                results['tts_test'] = False
+                results['tts_error'] = str(e)
+        else:
+            # Test fallback TTS
+            try:
+                test_audio = self._fallback_tts("Testing fallback audio")
+                results['tts_test'] = test_audio is not None
+                results['tts_fallback_used'] = True
             except Exception as e:
                 results['tts_test'] = False
                 results['tts_error'] = str(e)

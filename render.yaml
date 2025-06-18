@@ -7,6 +7,7 @@ services:
       apt-get update && \
       apt-get install -y \
         espeak espeak-data libespeak1 libespeak-dev \
+        espeak-ng espeak-ng-data \
         ffmpeg \
         portaudio19-dev \
         libasound2-dev \
@@ -14,9 +15,7 @@ services:
         python3-dev \
         build-essential \
         pkg-config && \
-      ldconfig && \
-      find /usr -name "libespeak.so*" -type f && \
-      ln -sf /usr/lib/x86_64-linux-gnu/libespeak.so.1 /usr/lib/libespeak.so.1 2>/dev/null || true
+      ldconfig
     buildCommand: |
       pip install --upgrade pip && \
       pip install PyAudio && \
@@ -25,3 +24,5 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: 3.10.18
+      - key: LD_LIBRARY_PATH
+        value: /usr/lib/x86_64-linux-gnu:/usr/lib:/lib
