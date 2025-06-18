@@ -14,7 +14,9 @@ services:
         python3-dev \
         build-essential \
         pkg-config && \
-      ldconfig
+      ldconfig && \
+      find /usr -name "libespeak.so*" -type f && \
+      ln -sf /usr/lib/x86_64-linux-gnu/libespeak.so.1 /usr/lib/libespeak.so.1 2>/dev/null || true
     buildCommand: |
       pip install --upgrade pip && \
       pip install PyAudio && \
