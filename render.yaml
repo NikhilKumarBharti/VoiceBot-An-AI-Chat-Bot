@@ -9,9 +9,15 @@ services:
         espeak espeak-data libespeak1 libespeak-dev \
         ffmpeg \
         portaudio19-dev \
+        libasound2-dev \
+        libpulse-dev \
         python3-dev \
-        build-essential
-    buildCommand: pip install -r requirements.txt
+        build-essential \
+        pkg-config
+    buildCommand: |
+      pip install --upgrade pip && \
+      pip install PyAudio && \
+      pip install -r requirements.txt
     startCommand: gunicorn app:app
     envVars:
       - key: PYTHON_VERSION
