@@ -30,11 +30,18 @@ class VoiceHandler:
     def _initialize_tts(self) -> Optional[pyttsx3.Engine]:
         """Initialize text-to-speech engine with fallbacks"""
         
+        # For Linux environments, prefer command-line tools
+        if platform.system() == 'Linux':
+            # Test if espeak command works first
+            if self._test_espeak_command():
+                logger.info("Using command-line espeak as primary TTS method")
+                return None  # Signal to use fallback method
+        
         # Try different TTS drivers in order of preference
         drivers_to_try = []
         
         if platform.system() == 'Linux':
-            drivers_to_try = ['espeak', 'espeak-ng', 'festival']
+            drivers_to_try = ['espeak']
         elif platform.system() == 'Darwin':  # macOS
             drivers_to_try = ['nsss']
         elif platform.system() == 'Windows':
@@ -57,7 +64,7 @@ class VoiceHandler:
                 logger.warning(f"Failed to initialize TTS with {driver}: {str(e)}")
                 continue
         
-        logger.error("All TTS drivers failed, TTS will not be available")
+        logger.info("pyttsx3 drivers failed, will use command-line TTS")
         return None
     
     def _configure_engine(self, engine) -> pyttsx3.Engine:
@@ -136,11 +143,26 @@ class VoiceHandler:
             logger.error(f"Speech to text error: {str(e)}")
             return None
     
+    def _test_espeak_command(self) -> bool:
+        """Test if espeak command line tool works"""
+        try:
+            result = subprocess.run(['espeak', '--version'], 
+                                  capture_output=True, text=True, timeout=5)
+            return result.returncode == 0
+        except Exception:
+            return False
+    
     def text_to_speech(self, text: str) -> Optional[str]:
         """Convert text to speech and return base64 encoded audio"""
+        # Try command-line first (more reliable in containers)
+        if platform.system() == 'Linux':
+            result = self._fallback_tts(text)
+            if result:
+                return result
+        
         if not self.tts_engine:
-            logger.warning("TTS engine not available, trying command line fallback")
-            return self._fallback_tts(text)
+            logger.warning("TTS engine not available and command-line fallback failed")
+            return None
             
         try:
             # Create temporary file for audio output
