@@ -21,7 +21,7 @@ def create_templates_directory():
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Claude Voice Bot</title>
+    <title>Voice-Bot</title>
     <style>
         /* Copy the CSS from the HTML artifact above */
     </style>

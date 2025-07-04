@@ -16,11 +16,11 @@ load_dotenv()
 
 logger = logging.getLogger(__name__)
 
-class ClaudeResponder:
+class ChatResponder:
     """Handles generating AI-bot-style responses"""
     
     def __init__(self):
-        self.claude_personality = self._load_claude_personality()
+        self.chat_personality = self._load_chat_personality()
         self.api_key = os.getenv('OPENROUTER_API_KEY')
         self.model = os.getenv('OPENROUTER_MODEL')  # Default to free model
         self.use_fallback = not self.api_key
@@ -28,7 +28,7 @@ class ClaudeResponder:
         if self.use_fallback:
             logger.warning("No OpenRouter API key found. Using fallback responses.")
     
-    def _load_claude_personality(self) -> Dict:
+    def _load_chat_personality(self) -> Dict:
         """Load personality traits and response patterns"""
         return {
             "traits": [
@@ -78,19 +78,19 @@ class ClaudeResponder:
         message_lower = message.lower()
         
         if any(phrase in message_lower for phrase in ["life story", "tell me about yourself", "who are you"]):
-            return self.claude_personality["sample_responses"]["life_story"]
+            return self.chat_personality["sample_responses"]["life_story"]
         
         elif any(phrase in message_lower for phrase in ["superpower", "greatest strength", "best at"]):
-            return self.claude_personality["sample_responses"]["superpower"]
+            return self.chat_personality["sample_responses"]["superpower"]
         
         elif any(phrase in message_lower for phrase in ["grow in", "areas to improve", "growth areas"]):
-            return self.claude_personality["sample_responses"]["growth_areas"]
+            return self.chat_personality["sample_responses"]["growth_areas"]
         
         elif any(phrase in message_lower for phrase in ["misconception", "misunderstand", "wrong about you"]):
-            return self.claude_personality["sample_responses"]["misconceptions"]
+            return self.chat_personality["sample_responses"]["misconceptions"]
         
         elif any(phrase in message_lower for phrase in ["push boundaries", "limits", "challenge yourself"]):
-            return self.claude_personality["sample_responses"]["pushing_boundaries"]
+            return self.chat_personality["sample_responses"]["pushing_boundaries"]
         
         return None
     
@@ -151,4 +151,4 @@ class ClaudeResponder:
     
     def get_personality_info(self) -> Dict:
         """Return information about AI-bot's personality for debugging"""
-        return self.claude_personality
+        return self.chat_personality

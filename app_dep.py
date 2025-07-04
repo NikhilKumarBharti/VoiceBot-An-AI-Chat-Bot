@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Voice Bot Web Application - Main Flask App
-A voice-enabled chatbot that responds as Claude would respond
+A voice-enabled chatbot that responds as a Chatbot would respond
 """
 
 from flask import Flask, render_template, request, jsonify
@@ -12,7 +12,7 @@ import logging
 
 # Import our custom modules
 from voice_handler import VoiceHandler
-from claude_responder import ClaudeResponder
+from chat_responder import ChatResponder
 from conversation_manager import ConversationManager
 
 # Configure logging
@@ -28,7 +28,7 @@ class VoiceBotApp:
         
         # Initialize components
         self.voice_handler = VoiceHandler()
-        self.claude_responder = ClaudeResponder()
+        self.chat_responder = ChatResponder()
         self.conversation_manager = ConversationManager()
         
         # Setup routes
@@ -53,7 +53,7 @@ class VoiceBotApp:
                     return jsonify({'error': 'No message provided'}), 400
                 
                 # Generate AI-style response
-                response = self.claude_responder.generate_response(user_message)
+                response = self.chat_responder.generate_response(user_message)
                 
                 # Save conversation
                 self.conversation_manager.add_exchange(user_message, response)
@@ -83,8 +83,8 @@ class VoiceBotApp:
                 if not transcribed_text:
                     return jsonify({'error': 'Could not transcribe audio'}), 400
                 
-                # Generate Claude-style response
-                text_response = self.claude_responder.generate_response(transcribed_text)
+                # Generate response
+                text_response = self.chat_responder.generate_response(transcribed_text)
                 
                 # Convert response to speech
                 audio_response = self.voice_handler.text_to_speech(text_response)

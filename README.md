@@ -22,9 +22,9 @@ This is a super cool web app that lets you chat with an AI bot using both text A
 
 ## 📁 What's Inside the Project
 ```
-claude-voice-bot/
+voice_bot/
 ├── app.py                 # The main brain of the app
-├── claude_responder.py    # Makes the bot sound smart and friendly
+├── chat_responder.py    # Makes the bot sound smart and friendly
 ├── voice_handler.py       # Handles all the voice magic
 ├── conversation_manager.py # Remembers your chats
 ├── templates/
@@ -96,9 +96,9 @@ sudo apt install ffmpeg
 1. **Open Terminal/Command Prompt**
 2. **Navigate to your project folder**:
    ```bash
-   cd Desktop/claude-voice-bot
+   cd Desktop/voice_bot
    ```
-   (Replace `Desktop/claude-voice-bot` with wherever you saved the project)
+   (Replace `Desktop/voice_bot` with wherever you saved the project)
 
 3. **Create a safe environment** for the project:
    ```bash
@@ -142,7 +142,7 @@ To make your bot super smart, you'll want an API key:
    - Add these lines:
    ```
    OPENROUTER_API_KEY="your-api-key-goes-here"
-   OPENROUTER_MODEL="anthropic/claude-3.5-sonnet"
+   OPENROUTER_MODEL="model/model-name-version"
    ```
    - Replace `your-api-key-goes-here` with your actual API key
    - Save the file

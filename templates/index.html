@@ -382,7 +382,7 @@
     </div>
 
     <script>
-        class ClaudeVoiceBot {
+        class VoiceBot {
             constructor() {
                 this.isRecording = false;
                 this.mediaRecorder = null;
@@ -633,7 +633,7 @@
                             <small style="color: #666;">${new Date(exchange.timestamp).toLocaleString()}</small>
                             <div style="margin: 0.5rem 0; font-weight: bold;">User:</div>
                             <div style="margin-bottom: 0.5rem;">${exchange.user_message}</div>
-                            <div style="margin: 0.5rem 0; font-weight: bold;">Claude:</div>
+                            <div style="margin: 0.5rem 0; font-weight: bold;">VoiceBot:</div>
                             <div>${exchange.assistant_response}</div>
                         </div>
                     `;
@@ -645,7 +645,7 @@
 
         // Initialize the bot when page loads
         document.addEventListener('DOMContentLoaded', () => {
-            new ClaudeVoiceBot();
+            new VoiceBot();
         });
     </script>
 </body>
