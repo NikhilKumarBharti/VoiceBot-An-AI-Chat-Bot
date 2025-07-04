@@ -22,7 +22,7 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 900px;
             width: 90%;
             background: rgba(255, 255, 255, 0.95);
             border-radius: 20px;
@@ -50,18 +50,20 @@
         }
 
         .chat-container {
-            height: 400px;
+            height: 450px;
             overflow-y: auto;
             padding: 1rem;
             background: #f8f9fa;
+            scroll-behavior: smooth;
         }
 
         .message {
-            margin-bottom: 1rem;
-            padding: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 1.2rem;
             border-radius: 15px;
-            max-width: 80%;
+            max-width: 85%;
             animation: fadeIn 0.3s ease-in;
+            line-height: 1.6;
         }
 
         .user-message {
@@ -78,10 +80,69 @@
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
         }
 
+        /* Markdown formatting styles */
+        .message-content h1, .message-content h2, .message-content h3 {
+            color: #2c3e50;
+            margin: 1rem 0 0.5rem 0;
+            font-weight: 600;
+        }
+
+        .message-content h1 { font-size: 1.4rem; }
+        .message-content h2 { font-size: 1.3rem; }
+        .message-content h3 { font-size: 1.2rem; }
+
+        .message-content strong {
+            font-weight: 700;
+            color: #2c3e50;
+        }
+
+        .message-content em {
+            font-style: italic;
+            color: #5d6d7e;
+        }
+
+        .message-content ul, .message-content ol {
+            margin: 0.5rem 0;
+            padding-left: 1.5rem;
+        }
+
+        .message-content li {
+            margin: 0.3rem 0;
+        }
+
+        .message-content p {
+            margin: 0.5rem 0;
+        }
+
+        .message-content blockquote {
+            border-left: 4px solid #4facfe;
+            padding-left: 1rem;
+            margin: 1rem 0;
+            font-style: italic;
+            color: #5d6d7e;
+        }
+
+        .message-content code {
+            background: #f1f2f6;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+
+        .message-content pre {
+            background: #f1f2f6;
+            padding: 1rem;
+            border-radius: 8px;
+            overflow-x: auto;
+            margin: 1rem 0;
+        }
+
         .message-time {
             font-size: 0.8rem;
             opacity: 0.7;
-            margin-top: 0.5rem;
+            margin-top: 0.8rem;
+            font-style: italic;
         }
 
         .input-section {
@@ -121,6 +182,7 @@
             transition: all 0.3s ease;
             text-transform: uppercase;
             letter-spacing: 1px;
+            white-space: nowrap;
         }
 
         .btn-primary {
@@ -158,6 +220,7 @@
 
         .recording {
             animation: pulse 1.5s infinite;
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%) !important;
         }
 
         .status-indicator {
@@ -193,6 +256,9 @@
             color: #666;
             font-style: italic;
             padding: 1rem;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            margin: 0 1rem;
         }
 
         .typing-dots {
@@ -260,6 +326,12 @@
 
         .audio-player {
             margin-top: 1rem;
+            width: 100%;
+        }
+
+        .audio-player audio {
+            width: 100%;
+            height: 40px;
         }
 
         .history-panel {
@@ -286,6 +358,9 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1001;
         }
 
         .close-history {
@@ -294,6 +369,56 @@
             font-size: 1.5rem;
             cursor: pointer;
             color: #666;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: background-color 0.3s ease;
+        }
+
+        .close-history:hover {
+            background-color: #e0e0e0;
+        }
+
+        .history-entry {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #4facfe;
+        }
+
+        .history-timestamp {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .history-user, .history-bot {
+            margin: 0.5rem 0;
+        }
+
+        .history-label {
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 0.3rem;
+        }
+
+        .clear-history-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        .clear-history-btn:hover {
+            background: #c82333;
         }
 
         @media (max-width: 768px) {
@@ -318,6 +443,34 @@
                 width: 100%;
                 right: -100%;
             }
+
+            .message {
+                max-width: 95%;
+            }
+
+            .btn {
+                padding: 0.8rem 1.5rem;
+                font-size: 0.9rem;
+            }
+        }
+
+        /* Scrollbar styling */
+        .chat-container::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-container::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb {
+            background: #c1c1c1;
+            border-radius: 10px;
+        }
+
+        .chat-container::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
         }
     </style>
 </head>
@@ -332,7 +485,7 @@
 
         <div class="chat-container" id="chatContainer">
             <div class="message bot-message">
-                <div>Hello! I'm Voice-Bot, your AI assistant. I'm here to help you with questions, conversations, and various tasks. You can type your message or use voice input. What would you like to explore together today?</div>
+                <div class="message-content">Hello! I'm Voice-Bot, your AI assistant. I'm here to help you with questions, conversations, and various tasks. You can type your message or use voice input. What would you like to explore together today?</div>
                 <div class="message-time" id="initialTime"></div>
             </div>
         </div>
@@ -367,6 +520,7 @@
                 <span class="question-btn" data-question="What are the top 3 areas you'd like to grow in?">Growth Areas</span>
                 <span class="question-btn" data-question="What misconception do your coworkers have about you?">Misconceptions</span>
                 <span class="question-btn" data-question="How do you push your boundaries and limits?">Push Boundaries</span>
+                <span class="question-btn" data-question="Tell me about Swami Vivekananda">About Swami Vivekananda</span>
             </div>
         </div>
     </div>
@@ -441,6 +595,37 @@
             setInitialTime() {
                 const timeElement = document.getElementById('initialTime');
                 timeElement.textContent = new Date().toLocaleTimeString();
+            }
+
+            // Enhanced markdown parsing function
+            parseMarkdown(text) {
+                let html = text;
+                
+                // Headers
+                html = html.replace(/^### (.*$)/gm, '<h3>$1</h3>');
+                html = html.replace(/^## (.*$)/gm, '<h2>$1</h2>');
+                html = html.replace(/^# (.*$)/gm, '<h1>$1</h1>');
+                
+                // Bold text
+                html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+                
+                // Italic text
+                html = html.replace(/\*(.*?)\*/g, '<em>$1</em>');
+                
+                // Line breaks and paragraphs
+                html = html.replace(/\n\n/g, '</p><p>');
+                html = html.replace(/\n/g, '<br>');
+                
+                // Wrap in paragraph tags if not already wrapped
+                if (!html.startsWith('<h') && !html.startsWith('<p')) {
+                    html = '<p>' + html + '</p>';
+                }
+                
+                // Clean up empty paragraphs
+                html = html.replace(/<p><\/p>/g, '');
+                html = html.replace(/<p><br><\/p>/g, '');
+                
+                return html;
             }
 
             async sendMessage() {
@@ -558,15 +743,29 @@
                 messageDiv.className = `message ${sender}-message`;
 
                 const contentDiv = document.createElement('div');
-                contentDiv.textContent = content;
+                contentDiv.className = 'message-content';
+                
+                if (sender === 'bot') {
+                    // Parse markdown for bot messages
+                    contentDiv.innerHTML = this.parseMarkdown(content);
+                } else {
+                    // Plain text for user messages
+                    contentDiv.textContent = content;
+                }
+                
                 messageDiv.appendChild(contentDiv);
 
                 if (audioData && sender === 'bot') {
+                    const audioPlayerDiv = document.createElement('div');
+                    audioPlayerDiv.className = 'audio-player';
+                    
                     const audioPlayer = document.createElement('audio');
                     audioPlayer.controls = true;
-                    audioPlayer.className = 'audio-player';
                     audioPlayer.src = `data:audio/wav;base64,${audioData}`;
-                    messageDiv.appendChild(audioPlayer);
+                    audioPlayer.preload = 'metadata';
+                    
+                    audioPlayerDiv.appendChild(audioPlayer);
+                    messageDiv.appendChild(audioPlayerDiv);
                 }
 
                 const timeDiv = document.createElement('div');
@@ -580,6 +779,7 @@
 
             showTyping() {
                 this.typingIndicator.style.display = 'flex';
+                this.chatContainer.scrollTop = this.chatContainer.scrollHeight;
             }
 
             hideTyping() {
@@ -629,17 +829,39 @@
                 let html = '';
                 history.forEach((exchange, index) => {
                     html += `
-                        <div style="margin-bottom: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 8px;">
-                            <small style="color: #666;">${new Date(exchange.timestamp).toLocaleString()}</small>
-                            <div style="margin: 0.5rem 0; font-weight: bold;">User:</div>
-                            <div style="margin-bottom: 0.5rem;">${exchange.user_message}</div>
-                            <div style="margin: 0.5rem 0; font-weight: bold;">VoiceBot:</div>
-                            <div>${exchange.assistant_response}</div>
+                        <div class="history-entry">
+                            <div class="history-timestamp">${new Date(exchange.timestamp).toLocaleString()}</div>
+                            <div class="history-user">
+                                <div class="history-label">You:</div>
+                                <div>${exchange.user_message}</div>
+                            </div>
+                            <div class="history-bot">
+                                <div class="history-label">Voice-Bot:</div>
+                                <div>${this.parseMarkdown(exchange.assistant_response)}</div>
+                            </div>
                         </div>
                     `;
                 });
 
+                html += '<button class="clear-history-btn" onclick="this.clearHistory()">Clear History</button>';
                 this.historyContent.innerHTML = html;
+            }
+
+            async clearHistory() {
+                try {
+                    const response = await fetch('/api/clear-history', {
+                        method: 'POST'
+                    });
+
+                    if (response.ok) {
+                        this.historyContent.innerHTML = '<p>History cleared successfully!</p>';
+                        this.showStatus('History cleared!', 'success');
+                    } else {
+                        this.showStatus('Error clearing history', 'error');
+                    }
+                } catch (error) {
+                    this.showStatus('Network error clearing history', 'error');
+                }
             }
         }
 
